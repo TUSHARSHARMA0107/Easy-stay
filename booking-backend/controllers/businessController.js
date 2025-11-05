@@ -1,7 +1,7 @@
 import prisma from "../prismaClient.js";
 import { createBusinessSchema } from "../validators/businessValidators.js";
 import { uploadBufferToCloudinary } from "../middleware/upload.js"; // upload helper lives in middleware/upload.js
-
+import { invalidateCache } from "../utils/cachemanager.js";
 // Create business (owner only)
 export const createBusiness = async (req, res) => {
   // validation
@@ -57,7 +57,11 @@ export const uploadBusinessImage = async (req, res) => {
     where: { id: businessId },
     data: { images: { push: url } },
     select: { id: true, images: true },
+    
   });
+  // Inside update handler, after prisma.business.update(...)
+await invalidateCache(`google:*${updatedBusiness.name.toLowerCase()}*`);
+await invalidateCache(`compare:*${updatedBusiness.name.toLowerCase()}*`);
 
   return res.json({ success: true, images: updated.images });
 };

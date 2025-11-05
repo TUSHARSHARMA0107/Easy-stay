@@ -15,4 +15,4 @@ router.post(
   stripeWebhookHandler
 );
 
-export default router;
+export default paymentRoutes;

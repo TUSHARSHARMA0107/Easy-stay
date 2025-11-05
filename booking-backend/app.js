@@ -9,6 +9,12 @@ import UserRoutes from "./routes/userRoutes";
 import businessRoutes from "./routes/businessRoutes";
 import unitRoutes from "./routes/uintRoutes";
 import bookingRoutes from "./routes/bookingRoutes";
+import googleRoutes from "./routes/googleRoutes";
+import googleRoutes from "./routes/googleRoutes";
+import aggregationRoutes from "./routes/aggregationRoutes";
+
+
+
 
 dotenv.config();
 
@@ -33,11 +39,14 @@ app.use(passport.session());
 
 
 //routes
-app.use("/auth",authRoutes);
-app.use("/user",UserRoutes);
+app.use("/api/auth",authRoutes);
+app.use("/api/user",UserRoutes);
 app.use("/api/business",businessRoutes);
 app.use("/api/unit",unitRoutes);
 app.use("/api/booking",bookingRoutes);
+app.use("api/google",googleRoutes);
+app.use("api/google", googleRoutes);
+app.use("/api/aggregate",aggregationRoutes);
 
 // Health Check
 app.get("/", (req, res) => {

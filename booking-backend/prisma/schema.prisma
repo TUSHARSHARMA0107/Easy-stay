@@ -13,6 +13,7 @@ model User {
   email          String    @unique
   password       String?
   googleId       String?   @unique
+  authProvider   String  @default("local")
   profileImage   String?   // DP from Google or custom upload
   role           Role      @default(USER)
   bookings       Booking[]
@@ -94,6 +95,40 @@ model Cache {
   expiresAt   DateTime
   createdAt   DateTime  @default(now())
 }
+model GoogleCache {
+  id        String   @id @default(cuid())
+  query     String
+  placeId   String?
+  results   Json
+  createdAt DateTime @default(now())
+  ttl       Int      @default(86400)
+}
+
+model ExternalPrice {
+  id          String   @id @default(cuid())
+  listingHash String
+  source      String
+  price       Float
+  currency    String   @default("INR")
+  url         String?
+  fetchedAt   DateTime @default(now())
+}
+model ExternalBusiness {
+  id          String   @id @default(cuid())
+  googleId    String?  @unique
+  name        String
+  address     String?
+  location    String?
+  rating      Float?
+  images      String[] @default([])
+  type        String?
+  lastFetched DateTime @default(now())
+}
+
+
+
+
+
 
 enum Role {
   USER
