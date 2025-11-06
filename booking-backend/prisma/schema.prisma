@@ -124,7 +124,9 @@ model ExternalBusiness {
   type        String?
   lastFetched DateTime @default(now())
 }
-
+model Room{
+  id 
+}
 
 
 

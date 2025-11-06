@@ -17,6 +17,7 @@ import googleAuthRoutes from "./routes/googleAuthRoutes.js";
 import session from "express-session";
 import profileRoutes from "./routes/profileRoutes.js";
 import logoutRoutes from "./routes/logoutRoutes.js";
+import chatbotRoute from "./routes/chatbotRoute.js";
 
 dotenv.config();
 const app = express();
@@ -49,6 +50,7 @@ app.use("/api/search",businessRoutes);
 app.use("/api/compare-prices",comparePriceRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/logout", logoutRoutes);
+app.use("/api/chatbot",chatbotRoute)
 // Example: other routes
 // app.use("/api/bookings", bookingRoutes);
 
