@@ -22,6 +22,46 @@ model User {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 }
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  placeId   String
+  name      String
+  address   String?
+  image     String?
+  type      String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  placeId   String
+  rating    Float
+  comment   String?
+  photos    String[] @default([])
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model ReviewReport {
+  id        String   @id @default(cuid())
+  reviewId  String
+  reason    String?
+  createdAt DateTime @default(now())
+}
+
+model RedirectLog {
+  id        String   @id @default(cuid())
+  platform  String
+  url       String
+  itemId    String?
+  userId    String?
+  clickedAt DateTime @default(now())
+}
+
+
 
 model Business {
   id            String     @id @default(cuid())

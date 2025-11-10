@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* UI helpers */
+.input {
+  @apply w-full rounded-xl border border-gray-200 bg-white/90 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500;
+}
+.btn {
+  @apply rounded-xl bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition;
+}
+.glass {
+  backdrop-filter: blur(18px);
+  background: rgba(255,255,255,0.12);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  border-radius: 1.5rem;
+}
+
+/* react-date-range styles (override minimal) */
+.rdrCalendarWrapper { color: #111; }

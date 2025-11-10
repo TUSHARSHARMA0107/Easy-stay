@@ -1,35 +1,27 @@
-// services/comparePriceService.js
-import axios from "axios";
+import { comparePrices } from "../services/compareService.js";
+import prisma from "../config/prismaClient.js";
 
-/**
- * Dummy price comparators using publicly accessible or demo endpoints
- * (In real integration, you’d replace these with official affiliate APIs)
- */
-export const fetchExternalPrices = async (name, location) => {
+export const comparePricesController = async (req, res) => {
   try {
-    const encoded = encodeURIComponent(`${name} ${location}`);
+    const { name, location, type } = req.query;
+    if (!name && !location) {
+      return res.status(400).json({ message: "Name or location is required" });
+    }
 
-    // Mock / Demo APIs (to be replaced later)
-    const [booking, agoda, trip] = await Promise.all([
-      fakePriceAPI("Booking.com", encoded),
-      fakePriceAPI("Agoda", encoded),
-      fakePriceAPI("Trip.com", encoded),
-    ]);
+    const local = await prisma.business.findFirst({
+      where: { name: { contains: name, mode: "insensitive" } },
+      select: { name: true, price: true },
+    });
 
-    return [booking, agoda, trip].filter(Boolean);
-  } catch (error) {
-    console.error("Price comparison error:", error.message);
-    return [];
+    const results = await comparePrices(name, location, type, local?.price || null);
+
+    res.status(200).json({
+      place: name,
+      location,
+      results,
+    });
+  } catch (err) {
+    console.error("Compare Error:", err);
+    res.status(500).json({ error: "Internal Server Error" });
   }
-};
-
-// Temporary simulated API call
-const fakePriceAPI = async (source, encodedName) => {
-  const basePrice = Math.floor(3000 + Math.random() * 4000);
-  return {
-    source,
-    price: basePrice,
-    currency: "INR",
-    link: `https://www.${source.toLowerCase().replace(".com", "")}.com/search?query=${encodedName}`,
-  };
 };
