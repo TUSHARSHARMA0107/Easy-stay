@@ -1,8 +1,5 @@
-import axios from "axios";
-
-
-
-export const searchPlaces=async(query)=>{
-      const res =await axios.get(`/api/places/search?query=${query}`);
-      return res.data.results;
-};
+import http from "./http";
+export const searchPlaces = (params) =>
+  http.get("/api/places/search", { params }).then(r => r.data.results || []);
+export const getPlaceDetails = (placeId) =>
+  http.get(`/api/places/details/${placeId}`).then(r => r.data.details);

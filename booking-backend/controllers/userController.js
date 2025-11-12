@@ -1,5 +1,29 @@
 import cloudinary from "../config/cloudinary.js";
 import { PrismaClient } from "@prisma/client";
+import prisma from "../prismaClient.js";
+import { uploadBufferToCloudinary } from "../middleware/upload.js";
+
+export const updatePhoto = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const file = req.file;
+
+    if (!file) return res.status(400).json({ message: "No image uploaded" });
+
+    const uploaded = await uploadBufferToCloudinary(file.buffer, "profile_photos");
+    const photoUrl = uploaded.secure_url;
+
+    const updated = await prisma.user.update({
+      where: { id: userId },
+      data: { photo: photoUrl },
+      select: { id: true, name: true, email: true, photo: true }
+    });
+
+    return res.json({ success: true, user: updated });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+};
 
 const prisma = new PrismaClient();
 

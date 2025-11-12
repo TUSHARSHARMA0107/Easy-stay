@@ -1,106 +1,43 @@
-import prisma from "../prisma/client.js";
+import prisma from "../prismaClient.js";
 
-// ✅ Add new review
 export const addReview = async (req, res) => {
   try {
-    const { userId, businessId, rating, comment } = req.body;
+    const userId = req.user.id;
+    const { businessId, rating, comment } = req.body;
 
-    if (!userId || !businessId || !rating)
-      return res.status(400).json({ message: "Missing required fields" });
+    // Prevent multiple reviews by same user for same business
+    const exists = await prisma.review.findFirst({ where: { userId, businessId } });
+    if (exists) return res.status(400).json({ message: "You already reviewed this place." });
 
-    const existing = await prisma.review.findFirst({ where: { userId, businessId } });
-    if (existing) return res.status(400).json({ message: "You already reviewed this business" });
-
-    const result = await prisma.$transaction(async (tx) => {
-      await tx.review.create({ data: { userId, businessId, rating, comment } });
-      const agg = await tx.review.aggregate({
-        where: { businessId },
-        _avg: { rating: true },
-      });
-      await tx.business.update({
-        where: { id: businessId },
-        data: { rating: agg._avg.rating || 0 },
-      });
-      return agg._avg.rating;
+    const review = await prisma.review.create({
+      data: { userId, businessId, rating: Number(rating), comment }
     });
 
-    res.status(201).json({ message: "Review added", newAverage: result });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-// ✅ Get all reviews for a business
-export const getBusinessReviews = async (req, res) => {
-  try {
-    const { businessId } = req.params;
-    const reviews = await prisma.review.findMany({
+    // Recalculate business rating
+    const stats = await prisma.review.aggregate({
       where: { businessId },
-      include: { user: { select: { name: true, profileImage: true } } },
-      orderBy: { createdAt: "desc" },
+      _avg: { rating: true }
     });
-    res.json(reviews);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+
+    await prisma.business.update({
+      where: { id: businessId },
+      data: { rating: stats._avg.rating }
+    });
+
+    res.status(201).json({ success: true, review });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
-// ✏ Edit review
-export const editReview = async (req, res) => {
-  try {
-    const { reviewId } = req.params;
-    const { rating, comment } = req.body;
+export const getReviews = async (req, res) => {
+  const businessId = req.params.id;
 
-    const review = await prisma.review.findUnique({ where: { id: reviewId } });
-    if (!review) return res.status(404).json({ message: "Review not found" });
+  const reviews = await prisma.review.findMany({
+    where: { businessId },
+    include: { user: { select: { name: true, photo: true }}},
+    orderBy: { createdAt: "desc" }
+  });
 
-    await prisma.$transaction(async (tx) => {
-      await tx.review.update({
-        where: { id: reviewId },
-        data: { rating, comment },
-      });
-
-      const agg = await tx.review.aggregate({
-        where: { businessId: review.businessId },
-        _avg: { rating: true },
-      });
-
-      await tx.business.update({
-        where: { id: review.businessId },
-        data: { rating: agg._avg.rating || 0 },
-      });
-    });
-
-    res.json({ message: "Review updated successfully" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-// 🗑 Delete review
-export const deleteReview = async (req, res) => {
-  try {
-    const { reviewId } = req.params;
-
-    const review = await prisma.review.findUnique({ where: { id: reviewId } });
-    if (!review) return res.status(404).json({ message: "Review not found" });
-
-    await prisma.$transaction(async (tx) => {
-      await tx.review.delete({ where: { id: reviewId } });
-
-      const agg = await tx.review.aggregate({
-        where: { businessId: review.businessId },
-        _avg: { rating: true },
-      });
-
-      await tx.business.update({
-        where: { id: review.businessId },
-        data: { rating: agg._avg.rating || 0 },
-      });
-    });
-
-    res.json({ message: "Review deleted successfully" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  res.json({ success: true, reviews });
 };

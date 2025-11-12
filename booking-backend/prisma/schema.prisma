@@ -38,6 +38,7 @@ model Review {
   id        String   @id @default(cuid())
   userId    String
   placeId   String
+  businessId  String
   rating    Float
   comment   String?
   photos    String[] @default([])

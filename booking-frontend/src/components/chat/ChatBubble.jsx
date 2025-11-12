@@ -12,7 +12,7 @@ export default function ChatBubble() {
           transition-all hover:scale-110 border-2 border-transparent bg-white/80 backdrop-blur-xl
           [background:linear-gradient(#ffffffbb,#ffffffbb) padding-box,linear-gradient(135deg,#FF6B6B,#FF9154,#9D4EDD,#2979FF) border-box]
         ">
-        <img src="/images/support-icon.svg" alt="support" className="w-7 h-7 opacity-80" />
+        <img src="../../assets/animations/customersupport.gif" alt="support" className="w-7 h-7 opacity-80" />
       </button>
       {open && <ChatWindow onClose={() => setOpen(false)} />}
     </>

@@ -23,6 +23,9 @@ import logoutRoutes from "./routes/logoutRoutes.js";
 import chatbotRoute from "./routes/chatbotRoute.js";
 import redirectRoutes from "./routes/redirectRoutes.js";
 import aggregationRoutes from "./routes/aggregationRoutes.js";
+import invoiceRoutes from "./routes/invoiceRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import analyticsRoutes from "./routes/analyticsRoutes.js";
 
 dotenv.config();
 
@@ -65,6 +68,8 @@ app.use("/api/logout", logoutRoutes);
 app.use("/api/chatbot", chatbotRoute);
 app.use("/api/redirect", redirectRoutes);
 app.use("/api/aggregate", aggregationRoutes);
+app.use("/api/invoice", invoiceRoutes);
+app.use("/api/analytics",analyticsRoutes);
 
 // Health Check
 app.get("/", (req, res) => {

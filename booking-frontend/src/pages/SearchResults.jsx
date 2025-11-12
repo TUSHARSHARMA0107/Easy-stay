@@ -2,6 +2,20 @@ import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import api from "../config/axios";
 
+// Skeleton loading card component
+function SkeletonCard() {
+  return (
+    <div className="animate-pulse flex gap-5 bg-white shadow-sm border rounded-2xl p-4">
+      <div className="w-44 h-36 bg-gray-300 rounded-xl"></div>
+      <div className="flex-1 space-y-3">
+        <div className="h-5 bg-gray-300 rounded w-3/4"></div>
+        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+        <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+      </div>
+    </div>
+  );
+}
+
 export default function SearchResults() {
   const [params] = useSearchParams();
   const [results, setResults] = useState([]);
@@ -13,17 +27,30 @@ export default function SearchResults() {
   const max = params.get("max") || 20000;
   const name = params.get("name") || "";
 
+
   useEffect(() => {
     async function load() {
       setLoading(true);
-      const res = await api.get("/search", { params: { location, type, min, max, name }});
-      setResults(res.data || []);
-      setLoading(false);
+      try {
+        const res = await api.get("/search", { params: { location, type, min, max, name }});
+        setResults(res.data || []);
+      } catch (error) {
+        console.error("Search error:", error);
+        setResults([]);
+      } finally {
+        setLoading(false);
+      }
     }
     load();
   }, [location, type, min, max, name]);
 
-  if (loading) return <p className="text-center py-20">Loading stays...</p>;
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-6 py-10">
+        {Array(6).fill().map((_, i) => <SkeletonCard key={i} />)}
+      </div>
+    );
+  }
   if (results.length === 0) return <p className="text-center py-20">No results found 😢 Try a different filter?</p>;
 
   return (

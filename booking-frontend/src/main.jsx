@@ -1,16 +1,23 @@
+// src/main.jsx
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
-import { GoogleOAuthProvider } from "@react-oauth/google";
-import { Toaster } from "react-hot-toast";
-import App from "./App";
+import App from "./App.jsx";
 import "./index.css";
 
+import { BrowserRouter } from "react-router-dom";
+
+// Context Providers
+import  AuthProvider from "./context/AuthContext";
+import  ThemeProvider from "./context/ThemeContext";
+
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+  <React.StrictMode>
     <BrowserRouter>
-      <App />
-      <Toaster position="top-center" />
+      <AuthProvider>
+        <ThemeProvider>
+          <App />
+        </ThemeProvider>
+      </AuthProvider>
     </BrowserRouter>
-  </GoogleOAuthProvider>
+  </React.StrictMode>
 );
