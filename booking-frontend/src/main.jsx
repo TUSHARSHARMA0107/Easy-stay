@@ -7,7 +7,7 @@ import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 
 // Context Providers
-import  AuthProvider from "./context/AuthContext";
+import  AuthProvider from "./context/AuthContext.jsx";
 import  ThemeProvider from "./context/ThemeContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
