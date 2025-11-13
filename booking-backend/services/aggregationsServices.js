@@ -1,6 +1,6 @@
 import prisma from "../prismaClient.js";
 import { textSearch, placeDetails } from "./googleService.js";
-import { fetchExternalPrices } from "./compareService.js";
+import { comparePrices } from "./compareService.js";
 import { getCache, setCache } from "../utils/cachemanager.js";
 
 /**

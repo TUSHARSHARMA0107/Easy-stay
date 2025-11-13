@@ -1,4 +1,4 @@
-import prisma from "../prisma/client.js";
+import prisma from "../prismaClient.js";
 import cloudinary from "../utils/cloudinary.js"; // optional, if using Cloudinary
 import jwt from "jsonwebtoken";
 

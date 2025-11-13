@@ -25,7 +25,7 @@ export const updatePhoto = async (req, res) => {
   }
 };
 
-const prisma = new PrismaClient();
+
 
 export const uploadProfileImage = async (req, res) => {
   try {

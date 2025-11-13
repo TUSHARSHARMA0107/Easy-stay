@@ -1,5 +1,5 @@
 // controllers/businessSearchController.js
-import { prisma } from "../lib/prisma.js";
+import  prisma  from "../prismaClient.js";
 
 /**
  * Compare names ignoring case and punctuation

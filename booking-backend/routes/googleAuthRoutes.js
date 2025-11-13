@@ -20,4 +20,4 @@ router.get(
   }
 );
 
-export default googleAuthRoutes;
+export default router;

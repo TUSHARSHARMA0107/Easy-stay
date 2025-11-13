@@ -1,6 +1,6 @@
 import express from "express";
 import { getProfile, updateProfile } from "../controllers/profileController.js";
-import { protect } from "../middlewares/authMiddleware.js";
+import { protect } from "../middleware/auth.js";
 import multer from "multer";
 
 const router = express.Router();
@@ -16,4 +16,4 @@ const upload = multer({ storage });
 router.get("/me", protect, getProfile);
 router.put("/update", protect, upload.single("image"), updateProfile);
 
-export default profileRoutes;
+export default router;

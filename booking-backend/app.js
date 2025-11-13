@@ -24,7 +24,7 @@ import chatbotRoute from "./routes/chatbotRoute.js";
 import redirectRoutes from "./routes/redirectRoutes.js";
 import aggregationRoutes from "./routes/aggregationRoutes.js";
 import invoiceRoutes from "./routes/invoiceRoutes.js";
-import userRoutes from "./routes/userRoutes.js";
+
 import analyticsRoutes from "./routes/analyticsRoutes.js";
 
 dotenv.config();

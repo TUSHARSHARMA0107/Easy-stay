@@ -6,4 +6,4 @@ const router = express.Router();
 // POST /api/chatbot
 router.post("/", chatWithBot);
 
-export default chatbotRoute;
+export default router;

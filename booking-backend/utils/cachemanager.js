@@ -1,4 +1,4 @@
-import { redis } from "../config/redisClient.js";
+import { redis } from "../config/redisClients.js";
 import prisma from "../prismaClient.js";
 
 export const setCache = async (key, data, ttl = 3600) => {

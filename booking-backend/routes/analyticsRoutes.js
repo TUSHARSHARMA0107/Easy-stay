@@ -1,9 +1,9 @@
 import express from "express";
-import { authMiddleware } from "../middleware/auth.js";
+import { protect } from "../middleware/auth.js";
 import { getOwnerAnalytics } from "../controllers/analyticsController.js";
 
 const router = express.Router();
 
-router.get("/owner", authMiddleware, getOwnerAnalytics);
+router.get("/owner", protect, getOwnerAnalytics);
 
-export default analyticsRoutes;
+export default router;

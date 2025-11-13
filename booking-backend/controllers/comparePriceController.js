@@ -1,5 +1,5 @@
 import axios from "axios";
-import prisma from "../config/prismaClient.js"; // your database connection
+import prisma from "../prismaClient.js"; // your database connection
 import dotenv from "dotenv";
 dotenv.config();
 

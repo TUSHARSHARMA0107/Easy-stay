@@ -1,4 +1,4 @@
-import { aggregateBusinesses } from "../services/aggregationService.js";
+import { aggregateBusinesses } from "../services/aggregationsServices.js";
 
 export const searchAggregate = async (req, res) => {
   const { q, location, sortBy } = req.query;

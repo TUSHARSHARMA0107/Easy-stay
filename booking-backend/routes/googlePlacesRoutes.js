@@ -1,13 +1,19 @@
 import express from "express";
 import {
-  searchPlacesController,
+  searchPlaces,
   getPlaceDetailsController,
   getPlacePhotoController,
 } from "../controllers/googlePlacesController.js";
 
 const router = express.Router();
-// Route: GET /api/google/places/search
+
+// Search for places
 router.get("/search", searchPlaces);
 
+// Get detailed info for a place
+router.get("/details/:placeId", getPlaceDetailsController);
 
-export default googlePlacesRoutes;
+// Get specific photo by media ID
+router.get("/photo/:photoId", getPlacePhotoController);
+
+export default router;

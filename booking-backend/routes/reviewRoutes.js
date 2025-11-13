@@ -9,12 +9,9 @@ import {
 
 const router = express.Router();
 
-// Public routes
 router.get("/:businessId", getBusinessReviews);
+router.post("/add", authMiddleware, addReview);
+router.put("/edit/:reviewId", authMiddleware, editReview);
+router.delete("/delete/:reviewId", authMiddleware, deleteReview);
 
-// Protected routes (later we’ll add auth middleware)
-router.post("/add", authMiddleware,addReview);
-router.put("/edit/:reviewId", editReview);
-router.delete("/delete/:reviewId",authMiddleware, deleteReview);
-
-export default reviewRoutes;
+export default router;

@@ -6,4 +6,4 @@ const router = express.Router();
 // Example: /api/redirect?url=https://booking.com/hotel/123
 router.get("/", handleExternalRedirect);
 
-export default redirectRoutes;
+export default router;

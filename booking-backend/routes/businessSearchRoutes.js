@@ -6,4 +6,4 @@ const router = express.Router();
 // Example: /api/search?query=hotels+in+delhi&type=lodging
 router.get("/", searchBusinesses);
 
-export default businessSearchRoutes;
+export default router;
