@@ -11,6 +11,7 @@ import  AuthProvider from "./context/AuthContext.jsx";
 import  ThemeProvider from "./context/ThemeContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
   <BrowserRouter>
     
       <AuthProvider>
@@ -20,5 +21,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       </AuthProvider>
 
       </BrowserRouter>
+      </React.StrictMode>
 
 );
