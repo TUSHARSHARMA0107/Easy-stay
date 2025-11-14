@@ -1,5 +1,13 @@
-import http from "./http";
-export const searchPlaces = (params) =>
-  http.get("/api/places/search", { params }).then(r => r.data.results || []);
-export const getPlaceDetails = (placeId) =>
-  http.get(`/api/places/details/${placeId}`).then(r => r.data.details);
+import api from "../axios";
+export const comparePrices= async (params)=>{
+  try{
+    const res=await  api.get("/api/compare/prices",{params});
+    return res.data.results || [];
+
+  }catch(err)
+{
+  console.error("Compare price error:",err);
+  return[];
+
+}
+};

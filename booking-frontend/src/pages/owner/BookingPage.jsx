@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { createBooking } from "../api/bookings";
+import { createBooking } from "../../config/services/bookings";
 
 export default function BookingPage() {
   const params = new URLSearchParams(window.location.search);

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { comparePrices } from "../api/compare";
+import { comparePrices } from "../config/services/compare";
 import LoadingAnimation from "../components/LoadingAnimation";
-import { providerLogos } from "../constants/providerLogos";
+import { providerLogos } from "../config/providerLogos";
 import { useNavigate } from "react-router-dom";
 
 export default function CompareModal({ name, location, type, cover, onClose }) {

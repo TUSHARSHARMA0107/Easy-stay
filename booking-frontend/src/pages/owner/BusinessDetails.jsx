@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import api from "../config/axios";
+import api from "../../config/axios";
 import { motion as Motion } from "framer-motion";
-import DateSelector from "../components/booking/DateSelector";
-import PriceComparison from "../components/compare/PriceComparison";
+import DateSelector from "../../components/booking/DateSelector";
+import PriceComparison from "../../components/compare/PriceComparison";
 import toast from "react-hot-toast";
 
 export default function BusinessDetails() {

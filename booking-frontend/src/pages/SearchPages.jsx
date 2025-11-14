@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { searchPlaces } from "../api/places";
+import { searchPlaces } from "../config/services/places";
 import PlaceCard from "../components/PlaceCard";
 import PlacesMap from "../components/PlacesMap";
 import LoadingAnimation from "../components/LoadingAnimation";

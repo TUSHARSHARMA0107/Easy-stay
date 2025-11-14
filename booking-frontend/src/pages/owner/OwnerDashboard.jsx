@@ -1,7 +1,7 @@
 import { useState } from "react";
-import BusinessInfo from "./sections/BusinessInfo";
-import UnitsManager from "./sections/UnitsManager";
-import OwnerBookings from "./sections/OwnerBookings";
+import BusinessInfo from "./BusinessInfo";
+import UnitsManager from "./UnitsManager";
+import OwnerBookings from "./OwnerBookings";
 
 const tabs = [
   { key: "business", label: "My Business" },
