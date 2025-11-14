@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion as Motion } from "framer-motion";
+import { motion } from "framer-motion";
 import Categories from "../components/auth/home/Categories";
 import Trending from "../components/auth/home/Trending";
 
