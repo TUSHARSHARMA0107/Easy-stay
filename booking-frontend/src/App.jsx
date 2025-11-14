@@ -91,10 +91,9 @@ export default function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <Router>
-          <AppContent />
-        </Router>
+        <AppContent />
       </AuthProvider>
     </ThemeProvider>
-  );
+  );
+
 }
