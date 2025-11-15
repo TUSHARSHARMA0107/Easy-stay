@@ -2,7 +2,7 @@ import { useState } from "react";
 import api from "../config/axios";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
-import GoogleButton from "../components/GoogleButton";
+import GoogleButton from "../components/GoogleLoginButton";
 
 export default function Register() {
   const [name,setName] = useState("");

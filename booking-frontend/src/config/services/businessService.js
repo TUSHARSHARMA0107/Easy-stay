@@ -1,25 +1,41 @@
-import api from "../config/axios";
+import http from "../api/http";
 
+// Create new business
 export const createBusiness = async (data) => {
-  const res = await api.post("/business", data);
-  return res.data;
+  try {
+    const res = await http.post("/api/business/create", data);
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || { message: "Business creation failed" };
+  }
 };
 
-export const getBusinesses = async (params) => {
-  const res = await api.get("/business", { params });
-  return res.data;
+// Update a business
+export const updateBusiness = async (id, data) => {
+  try {
+    const res = await http.put(`/api/business/${id}`, data);
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || { message: "Business update failed" };
+  }
 };
 
-export const getBusinessById = async (id) => {
-  const res = await api.get(`/business/${id}`);
-  return res.data;
+// Get business by ID
+export const getBusiness = async (id) => {
+  try {
+    const res = await http.get(`/api/business/${id}`);
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || { message: "Failed to get business" };
+  }
 };
 
-export const uploadBusinessImage = async (id, file) => {
-  const formData = new FormData();
-  formData.append("file", file);
-  const res = await api.post(`/business/${id}/upload`, formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
-  return res.data;
+// Get businesses of owner
+export const getOwnerBusinesses = async () => {
+  try {
+    const res = await http.get("/api/business/owner/me");
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || { message: "Failed to load businesses" };
+  }
 };

@@ -1,23 +1,26 @@
-// src/main.jsx
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
-import { BrowserRouter } from "react-router-dom";
-
-// context providers
-import AuthProvider from "./context/AuthContext.jsx";
-import ThemeProvider from "./context/ThemeContext.jsx";
-
 import "./index.css";
+
+import { ThemeProvider } from "./context/ThemeContext.jsx";
+import { AuthProvider } from "./context/AuthContext.jsx";
+import { FavoritesProvider } from "./context/FavoritesContext.jsx";
+import { ChatProvider } from "./context/ChatContext.jsx";
+import { SearchProvider } from "./context/SearchContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <ThemeProvider>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
-      </ThemeProvider>
-    </BrowserRouter>
+    <ThemeProvider>
+      <AuthProvider>
+        <FavoritesProvider>
+          <SearchProvider>
+            <ChatProvider>
+              <App />
+            </ChatProvider>
+          </SearchProvider>
+        </FavoritesProvider>
+      </AuthProvider>
+    </ThemeProvider>
   </React.StrictMode>
 );

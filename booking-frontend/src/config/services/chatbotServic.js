@@ -1,6 +1,11 @@
-import api from "../config/axios";
+import http from "../api/http";
 
-export const sendMessageToBot = async (message) => {
-  const res = await api.post("/chatbot/message", { message });
-  return res.data;
+// Send message to AI Chatbot
+export const sendChatMessage = async (message) => {
+  try {
+    const res = await http.post("/api/chatbot/message", { message });
+    return res.data; // { reply: "..." }
+  } catch (err) {
+    throw err.response?.data || { message: "Chatbot request failed" };
+  }
 };

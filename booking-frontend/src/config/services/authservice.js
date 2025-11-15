@@ -1,21 +1,38 @@
-import api from "../config/axios";
+import http from "../api/http";
 
-export const registerUser = async (data) => {
-  const res = await api.post("/auth/register", data);
-  return res.data;
+// Register new user or owner
+export const register = async (data) => {
+  try {
+    const res = await http.post("/api/auth/register", data);
+    if (res.data.token) localStorage.setItem("token", res.data.token);
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || { message: "Registration failed" };
+  }
 };
 
-export const loginUser = async (data) => {
-  const res = await api.post("/auth/login", data);
-  return res.data;
+// Login user
+export const login = async (data) => {
+  try {
+    const res = await http.post("/api/auth/login", data);
+    if (res.data.token) localStorage.setItem("token", res.data.token);
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || { message: "Login failed" };
+  }
 };
 
-export const verifyEmail = async (token) => {
-  const res = await api.get(`/auth/verify/${token}`);
-  return res.data;
+// Return authenticated user
+export const getProfile = async () => {
+  try {
+    const res = await http.get("/api/auth/me");
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || { message: "Failed to fetch profile" };
+  }
 };
 
-export const getUserProfile = async () => {
-  const res = await api.get("/auth/profile");
-  return res.data;
+// Logout user
+export const logout = () => {
+  localStorage.removeItem("token");
 };

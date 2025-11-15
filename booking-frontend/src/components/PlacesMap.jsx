@@ -9,19 +9,24 @@ const icon = new L.Icon({
 
 export default function PlacesMap({ places }) {
   const first = places?.[0];
-  const lat = first?.location?.latitude || 19.0760;
+  const lat = first?.location?.latitude || 19.076;
   const lng = first?.location?.longitude || 72.8777;
+
   return (
     <div className="h-[60vh] rounded-xl overflow-hidden shadow">
       <MapContainer center={[lat, lng]} zoom={12} className="h-full w-full">
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
-        {(places||[]).map((p,i) => {
+        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        {(places || []).map((p, i) => {
           const la = p.location?.latitude || p.geometry?.location?.lat;
           const lo = p.location?.longitude || p.geometry?.location?.lng;
           if (!la || !lo) return null;
           return (
-            <Marker key={i} position={[la,lo]} icon={icon}>
-              <Popup><b>{p.displayName?.text || p.name}</b><br/>{p.formattedAddress || p.address}</Popup>
+            <Marker key={i} position={[la, lo]} icon={icon}>
+              <Popup>
+                <b>{p.displayName?.text || p.name}</b>
+                <br />
+                {p.formattedAddress || p.address}
+              </Popup>
             </Marker>
           );
         })}

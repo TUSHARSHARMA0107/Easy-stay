@@ -1,34 +1,89 @@
 import { useState } from "react";
-import { addReview } from "../api/reviews";
+import ModalWrapper from "./ModalWrapper";
+import api from "../config/axios";
+import { FaStar } from "react-icons/fa";
 
-export default function ReviewModal({ placeId, onClose }) {
-  const [rating, setRating] = useState(5);
+export default function ReviewModal({ open, onClose, businessId, onSubmitted }) {
+  const [rating, setRating] = useState(0);
+  const [hover, setHover] = useState(0);
   const [comment, setComment] = useState("");
-  const [files, setFiles] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const submit = async () => {
-    const form = new FormData();
-    form.append("placeId", placeId);
-    form.append("rating", rating);
-    form.append("comment", comment);
-    [...files].forEach(f => form.append("photos", f));
-    await addReview(form);
-    onClose(true);
+  const submitReview = async () => {
+    if (rating === 0) return alert("Please select a rating");
+
+    try {
+      setLoading(true);
+
+      await api.post(
+        "/reviews/add",
+        { businessId, rating, comment },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      setLoading(false);
+      onSubmitted(); // Reload reviews outside modal
+      onClose(); // Close modal
+    } catch {
+      console.error("Review submit error:", );
+      alert("Failed to submit review.");
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-[#0D1117] p-5 rounded-2xl w-96 shadow">
-        <h3 className="text-lg font-semibold mb-2">Write a Review</h3>
-        <label className="text-xs">Rating</label>
-        <input type="number" min="1" max="5" value={rating} onChange={e=>setRating(e.target.value)}
-               className="w-full border rounded-md px-2 py-1 mb-2" />
-        <textarea className="w-full border rounded-md px-2 py-2 mb-2" rows={3}
-                  placeholder="Share your experience..." value={comment} onChange={e=>setComment(e.target.value)} />
-        <input type="file" multiple accept="image/*" onChange={e=>setFiles(e.target.files)} />
-        <button onClick={submit} className="w-full bg-green-600 text-white py-2 rounded-lg mt-3">Submit</button>
-        <button onClick={()=>onClose(false)} className="w-full mt-2 text-gray-500">Cancel</button>
+    <ModalWrapper open={open} onClose={onClose}>
+      <div className="bg-white dark:bg-neutral-900 rounded-xl p-5 shadow-lg w-full max-w-md">
+
+        <h2 className="text-xl font-semibold mb-3 dark:text-white">
+          Write a Review
+        </h2>
+
+        {/* ⭐ Rating Stars */}
+        <div className="flex gap-2 mb-4">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <FaStar
+              key={star}
+              size={28}
+              onClick={() => setRating(star)}
+              onMouseEnter={() => setHover(star)}
+              onMouseLeave={() => setHover(0)}
+              className={`cursor-pointer transition
+                ${star <= (hover || rating)
+                  ? "text-yellow-400"
+                  : "text-gray-400"
+                }`}
+            />
+          ))}
+        </div>
+
+        {/* 📝 Comment */}
+        <textarea
+          placeholder="Write your experience..."
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          className="w-full p-3 border dark:border-neutral-700 dark:bg-neutral-800 
+                     rounded-lg focus:ring-2 focus:ring-blue-500 outline-none
+                     text-sm dark:text-white"
+          rows={4}
+        ></textarea>
+
+        {/* Submit */}
+        <button
+          disabled={loading}
+          onClick={submitReview}
+          className="w-full mt-4 py-2 rounded-lg text-white
+                     bg-gradient-to-r from-blue-500 to-blue-700
+                     hover:brightness-110 transition disabled:opacity-50"
+        >
+          {loading ? "Submitting..." : "Submit Review"}
+        </button>
+
       </div>
-    </div>
+    </ModalWrapper>
   );
 }

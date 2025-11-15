@@ -1,11 +1,31 @@
-import api from "../config/axios";
+import http from "../api/http";
 
-export const initiatePayment = async (data) => {
-  const res = await api.post("/payment/initiate", data);
-  return res.data;
+// Start Razorpay checkout
+export const createOrder = async (bookingData) => {
+  try {
+    const res = await http.post("/api/bookings", bookingData); 
+    return res.data; // contains razorpay order + bookingId
+  } catch (err) {
+    throw err.response?.data || { message: "Payment initiation failed" };
+  }
 };
 
-export const confirmPayment = async (paymentId) => {
-  const res = await api.post(`/payment/confirm/${paymentId}`);
-  return res.data;
+// Verify payment after Razorpay callback
+export const verifyPayment = async (payload) => {
+  try {
+    const res = await http.post("/api/payment/verify", payload);
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || { message: "Payment verification failed" };
+  }
+};
+
+// Get invoice
+export const getInvoice = async (bookingId) => {
+  try {
+    const res = await http.get(`/api/invoice/${bookingId}`);
+    return res.data;
+  } catch (err) {
+    throw err.response?.data || { message: "Invoice fetch failed" };
+  }
 };
