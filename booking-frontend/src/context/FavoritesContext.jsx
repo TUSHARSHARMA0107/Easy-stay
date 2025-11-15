@@ -1,20 +1,21 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
-const FavoritesContext = createContext();
+export const FavoritesContext = createContext();
 
-export const FavoritesProvider = ({ children }) => {
+export function FavoritesProvider({ children }) {
   const [favorites, setFavorites] = useState(() => {
-    const saved = localStorage.getItem("favorites");
-    return saved ? JSON.parse(saved) : [];
+    return JSON.parse(localStorage.getItem("favorites")) || [];
   });
 
   const toggleFavorite = (item) => {
-    let updated;
+    let updated = [...favorites];
 
-    if (favorites.find((i) => i.id === item.id)) {
-      updated = favorites.filter((i) => i.id !== item.id);
+    const exists = favorites.find((f) => f.id === item.id);
+
+    if (exists) {
+      updated = favorites.filter((f) => f.id !== item.id);
     } else {
-      updated = [...favorites, item];
+      updated.push(item);
     }
 
     setFavorites(updated);
@@ -26,6 +27,6 @@ export const FavoritesProvider = ({ children }) => {
       {children}
     </FavoritesContext.Provider>
   );
-};
+}
 
 export const useFavorites = () => useContext(FavoritesContext);

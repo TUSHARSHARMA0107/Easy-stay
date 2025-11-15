@@ -1,62 +1,28 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import api from "../config/axios";
+import { createContext, useContext, useState } from "react";
 
-const AuthContext = createContext();
+export const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(() => {
+    return JSON.parse(localStorage.getItem("user")) || null;
+  });
 
-  // Load user from localStorage on start
-  useEffect(() => {
-    const savedUser = localStorage.getItem("user");
-    const savedToken = localStorage.getItem("token");
-
-    if (savedUser && savedToken) {
-      setUser(JSON.parse(savedUser));
-      api.defaults.headers.common["Authorization"] = `Bearer ${savedToken}`;
-    }
-
-    setLoading(false);
-  }, []);
-
-  // User login function
-  const login = async (email, password) => {
-    const res = await api.post("/auth/login", { email, password });
-
-    localStorage.setItem("user", JSON.stringify(res.data.user));
-    localStorage.setItem("token", res.data.token);
-
-    setUser(res.data.user);
-
-    api.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
+  const login = (userData) => {
+    setUser(userData);
+    localStorage.setItem("user", JSON.stringify(userData));
   };
 
-  // Google login
-  const googleLogin = async (googleToken) => {
-    const res = await api.post("/auth/google-login", { googleToken });
-
-    localStorage.setItem("user", JSON.stringify(res.data.user));
-    localStorage.setItem("token", res.data.token);
-
-    setUser(res.data.user);
-
-    api.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
-  };
-
-  // Logout
   const logout = () => {
+    setUser(null);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
-    setUser(null);
-    delete api.defaults.headers.common["Authorization"];
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, googleLogin, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
 export const useAuth = () => useContext(AuthContext);
