@@ -29,7 +29,7 @@ export default function Navbar() {
 
         {/* Logo */}
         <Link
-          to="/"
+          to="../../public/assets/app logo.png"
           className="font-semibold text-xl text-blue-700 dark:text-blue-300 flex items-center gap-2"
         >
           <img src="../assets/app logo.png" className="h-8" alt="EasyStay" />
@@ -39,13 +39,13 @@ export default function Navbar() {
         {/* Desktop Menu */}
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
 
-          <Link to="../pages/HomePage.jsx" className="hover:text-blue-600 dark:hover:text-blue-400">Home</Link>
-          <Link to="../pages/SearchPage.jsx" className="hover:text-blue-600 dark:hover:text-blue-400">Search</Link>
-          <Link to="../pages/BookingPage.jsx" className="hover:text-blue-600 dark:hover:text-blue-400">Explore</Link>
+          <Link to="/" className="hover:text-blue-600 dark:hover:text-blue-400">Home</Link>
+          <Link to="/search" className="hover:text-blue-600 dark:hover:text-blue-400">Search</Link>
+          <Link to="/bookings" className="hover:text-blue-600 dark:hover:text-blue-400">Explore</Link>
 
           {user?.role === "OWNER" && (
             <Link
-              to="../pages/OwnerDashboard.jsx"
+              to="/owner/dashboard"
               className="hover:text-blue-600 dark:hover:text-blue-400"
             >
               Owner
@@ -54,7 +54,7 @@ export default function Navbar() {
 
           {user && (
             <Link
-              to="../pages/MyBooking.jsx"
+              to="/my-bookings"
               className="hover:text-blue-600 dark:hover:text-blue-400"
             >
               My Bookings
@@ -85,7 +85,7 @@ export default function Navbar() {
               </Link>
 
               <Link
-                to="../pages/RegisterPage.jsx"
+                to="/register"
                 className="px-4 py-1.5 rounded-lg bg-gradient-to-r
                 from-[#FF6B6B] via-[#FF9154] to-[#2979FF]
                 text-white shadow hover:brightness-110 transition"
@@ -111,7 +111,7 @@ export default function Navbar() {
 
                   {user.role === "OWNER" && (
                     <Link
-                      to="../pages/OwnerDashboard.jsx"
+                      to="/owner/dashboard"
                       className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
                       Owner Dashboard
@@ -119,7 +119,7 @@ export default function Navbar() {
                   )}
 
                   <Link
-                    to="../pages/OwnerManageHotelPage.jsx"
+                    to="/my-bookings"
                     className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
                     My Bookings
@@ -151,29 +151,29 @@ export default function Navbar() {
       {/* Mobile Drawer */}
       {mobile && (
         <div className="md:hidden bg-white dark:bg-gray-900 border-t dark:border-gray-700 p-4 flex flex-col gap-4 text-base">
-          <Link to="../pages/HomePage.jsx" onClick={() => setMobile(false)}>Home</Link>
-          <Link to="../pages/SearchPage.jsx" onClick={() => setMobile(false)}>Search</Link>
-          <Link to="../pages/SearchPage.jsx" onClick={() => setMobile(false)}>Explore</Link>
+          <Link to="/" onClick={() => setMobile(false)}>Home</Link>
+          <Link to="/search" onClick={() => setMobile(false)}>Search</Link>
+          <Link to="/bookings" onClick={() => setMobile(false)}>Explore</Link>
 
           {user?.role === "OWNER" && (
-            <Link to="../pages/OwnerDashboard.jsx" onClick={() => setMobile(false)}>Owner</Link>
+            <Link to="/owner/dashboard" onClick={() => setMobile(false)}>Owner</Link>
           )}
 
           {user && (
-            <Link to="../pages/OwnerManageHotelPage.jsx" onClick={() => setMobile(false)}>My Bookings</Link>
+            <Link to="/my-bookings" onClick={() => setMobile(false)}>My Bookings</Link>
           )}
 
           {!user ? (
             <>
               <Link
-                to="../pages/LoginPage.jsx"
+                to="/login"
                 className="px-4 py-2 rounded border border-blue-600 dark:border-blue-400"
                 onClick={() => setMobile(false)}
               >
                 Login
               </Link>
               <Link
-                to="../pages/RegisterPage.jsx"
+                to="/register"
                 className="px-4 py-2 rounded bg-blue-600 text-white"
                 onClick={() => setMobile(false)}
               >

@@ -1,7 +1,7 @@
 import { GoogleLogin } from "@react-oauth/google";
 import toast from "react-hot-toast";
 import api from "../config/axios";
-import googleLogo from "../assets/google-logo.png"; // we’ll add this next
+import googleLogo from "../../public/assets/google-logo.png"; // we’ll add this next
 
 export default function GoogleButton() {
 

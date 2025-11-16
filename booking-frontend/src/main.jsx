@@ -8,8 +8,10 @@ import { AuthProvider } from "./context/AuthContext.jsx";
 import { FavoritesProvider } from "./context/FavoritesContext.jsx";
 import { ChatProvider } from "./context/ChatContext.jsx";
 import { SearchProvider } from "./context/SearchContext.jsx";
+import { BrowserRouter } from "react-router-dom";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
+  <BrowserRouter>
   <React.StrictMode>
     <ThemeProvider>
       <AuthProvider>
@@ -23,4 +25,5 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       </AuthProvider>
     </ThemeProvider>
   </React.StrictMode>
+  </BrowserRouter>
 );

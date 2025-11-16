@@ -1,38 +1,27 @@
-// src/config/axios.js
 import axios from "axios";
-import API_BASE_URL from "../config/api/http";
 
 const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  baseURL: "http://localhost:5000/api",   // MUST be a plain string
+  withCredentials: true,                  // login, cookies etc
+  timeout: 20000,                         // 20 sec timeout (safe)
 });
 
-// 🔒 Attach token automatically before each request
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("token"); // or "access_token" depending on your backend
-    if (token) {
-      config.headers.Authorization =` Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+// 🔹 Automatically attach auth token (if exists)
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
-// ⚠ Handle common errors globally
+// 🔹 Auto-handle expired sessions
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response) {
-      if (error.response.status === 401) {
-        console.warn("⚠ Unauthorized! Redirecting to login...");
-        localStorage.removeItem("token");
-        window.location.href = "/login";
-      } else if (error.response.status === 500) {
-        console.error(" Server error:", error.response.data.message);
-      }
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
     }
     return Promise.reject(error);
   }

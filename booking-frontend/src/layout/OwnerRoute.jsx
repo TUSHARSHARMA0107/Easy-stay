@@ -1,13 +1,11 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext.jsx";
+import { useAuth } from "../context/AuthContext";
 
 export default function OwnerRoute({ children }) {
-  const { user, loading } = useAuth();
-
-  if (loading) return <p className="text-center py-10">Loading...</p>;
+  const { user } = useAuth();
 
   if (!user || user.role !== "OWNER") {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return children;

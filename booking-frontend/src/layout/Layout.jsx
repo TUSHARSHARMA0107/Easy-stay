@@ -1,10 +1,11 @@
-import Navbar from "../components/Navbar.jsx";
-import BottomNav from "../components/BottomNav.jsx";
-import ChatBubble from "../components/ChatBubble.jsx";
-import ChatWindow from "../components/ChatWindow.jsx";
-import { useChat } from "../context/ChatContext.jsx";
+import Navbar from "../components/Navbar";
+import BottomNav from "../components/BottomNav";
+import ChatBubble from "../components/ChatBubble";
+import ChatWindow from "../components/ChatWindow";
+import { useChat } from "../context/ChatContext";
+import { Outlet } from "react-router-dom";
 
-export default function Layout({ children }) {
+export default function Layout() {
   const { chatOpen } = useChat();
 
   return (
@@ -12,7 +13,7 @@ export default function Layout({ children }) {
       <Navbar />
 
       <main className="px-4 pt-4 pb-20">
-        {children}
+        <Outlet />   {/* 👉 SAARE ROUTES YAHAN RENDER HONGE */}
       </main>
 
       <ChatBubble />

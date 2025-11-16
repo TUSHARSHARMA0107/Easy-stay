@@ -1,117 +1,119 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Layout from "./layout/Layout.jsx";
+import { Routes,Route } from "react-router-dom";
+import Layout from "./layout/Layout";
 
-// Pages
-import HomePage from "./pages/HomePage.jsx";
-import SearchPage from "./pages/SearchPage.jsx";
-import PlaceDetailsPage from "./pages/PlaceDetails.jsx";
-import ComparePricesPage from "./pages/ComparePricePage.jsx";
-import BookingPage from "./pages/BookingPage.jsx";
-import MyBookings from "./pages/MyBooking.jsx";
-import UserProfilePage from "./pages/UserProfilePage.jsx";
-import ReviewsPage from "./pages/ReviewsPage.jsx";
 
-import LoginPage from "./pages/LoginPage.jsx";
-import RegisterPage from "./pages/RegisterPage.jsx";
-import OwnerRegisterPage from "./pages/OwnerRegisterPage.jsx";
+import HomePage from "./pages/HomePage";
+import SearchPage from "./pages/SearchPage";
+import PlaceDetailsPage from "./pages/PlaceDetails";
+import ComparePricesPage from "./pages/ComparePricePage";
+import BookingPage from "./pages/BookingPage";
+import MyBookings from "./pages/MyBooking";
+import UserProfilePage from "./pages/UserProfilePage";
+import ReviewsPage from "./pages/ReviewsPage";
 
-import OwnerDashboardPage from "./pages/OwnerDashboard.jsx";
-import OwnerAddHotelPage from "./pages/OwnerAddHotelPage.jsx";
-import OwnerManageHotelPage from "./pages/OwnerManageHotelPage.jsx";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import OwnerRegisterPage from "./pages/OwnerRegisterPage";
+import OwnerDashboardPage from "./pages/OwnerDashboard";
+import OwnerAddHotelPage from "./pages/OwnerAddHotelPage";
+import OwnerManageHotelPage from "./pages/OwnerManageHotelPage";
 
-import RedirectPage from "./pages/RedirectPage.jsx";
-import NotFoundPage from "./pages/NotFoundPage.jsx";
+import RedirectPage from "./pages/RedirectPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
-// Protected Routes
-import ProtectedRoute from "./layout/ProtectedRoutes.jsx";
-import OwnerRoute from "./layout/OwnerRoute.jsx";
+import ProtectedRoute from "./layout/ProtectedRoutes";
+import OwnerRoute from "./components/OwnerRoute";
+
+
 
 export default function App() {
   return (
-    <Router>
-      <Layout>
-        <Routes>
+    <Routes>
 
-          {/* Public */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/search" element={<SearchPage />} />
-          <Route path="/places/:placeId" element={<PlaceDetailsPage />} />
-          <Route path="/compare" element={<ComparePricesPage />} />
+      {/* ALL ROUTES INSIDE LAYOUT */}
+      <Route element={<Layout />}>
 
-          {/* Auth */}
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/owner/register" element={<OwnerRegisterPage />} />
+        {/* Public */}
+        <Route path="/" element={<HomePage />} />
+        <Route path="/search" element={<SearchPage />} />
+        <Route path="/places/:placeId" element={<PlaceDetailsPage />} />
+        <Route path="/compare" element={<ComparePricesPage />} />
 
-          {/* Protected User */}
-          <Route
-            path="/book/:id"
-            element={
-              <ProtectedRoute>
-                <BookingPage />
-              </ProtectedRoute>
-            }
-          />
+        {/* Auth */}
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/owner/register" element={<OwnerRegisterPage />} />
 
-          <Route
-            path="/my-bookings"
-            element={
-              <ProtectedRoute>
-                <MyBookings />
-              </ProtectedRoute>
-            }
-          />
+        {/* Protected */}
+        <Route
+          path="/book/:id"
+          element={
+            <ProtectedRoute>
+              <BookingPage />
+            </ProtectedRoute>
+          }
+        />
 
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <UserProfilePage />
-              </ProtectedRoute>
-            }
-          />
+        <Route
+          path="/my-bookings"
+          element={
+            <ProtectedRoute>
+              <MyBookings />
+            </ProtectedRoute>
+          }
+        />
 
-          <Route
-            path="/reviews/:businessId"
-            element={<ReviewsPage />}
-          />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <UserProfilePage />
+            </ProtectedRoute>
+          }
+        />
 
-          {/* Owner */}
-          <Route
-            path="/owner/dashboard"
-            element={
-              <OwnerRoute>
-                <OwnerDashboardPage />
-              </OwnerRoute>
-            }
-          />
+        {/* Public Reviews */}
+        <Route path="/reviews/:businessId" element={<ReviewsPage />} />
 
-          <Route
-            path="/owner/hotels/new"
-            element={
-              <OwnerRoute>
-                <OwnerAddHotelPage />
-              </OwnerRoute>
-            }
-          />
+        {/* Owner */}
+        <Route
+          path="/owner/dashboard"
+          element={
+            <OwnerRoute>
+              <OwnerDashboardPage />
+            </OwnerRoute>
+          }
+        />
 
-          <Route
-            path="/owner/hotels/:id/edit"
-            element={
-              <OwnerRoute>
-                <OwnerManageHotelPage />
-              </OwnerRoute>
-            }
-          />
+        <Route
+          path="/owner/hotels/new"
+          element={
+            <OwnerRoute>
+              <OwnerAddHotelPage />
+            </OwnerRoute>
+          }
+        />
 
-          {/* Redirect */}
-          <Route path="/redirect" element={<RedirectPage />} />
+        <Route
+          path="/owner/hotels/:id/edit"
+          element={
+            <OwnerRoute>
+              <OwnerManageHotelPage />
+            </OwnerRoute>
+          }
+        />
 
-          {/* 404 */}
-          <Route path="*" element={<NotFoundPage />} />
+        {/* Redirect */}
+        <Route path="/redirect" element={<RedirectPage />} />
 
-        </Routes>
-      </Layout>
-    </Router>
-  );
+      </Route>
+
+      {/* 404 OUTSIDE LAYOUT */}
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
+);
+
+    
+    
+  
 }
