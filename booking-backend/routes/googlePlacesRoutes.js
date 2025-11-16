@@ -1,19 +1,20 @@
+// routes/googlePlacesRoutes.js
 import express from "express";
 import {
-  searchPlaces,
+  searchPlacesController,
   getPlaceDetailsController,
   getPlacePhotoController,
 } from "../controllers/googlePlacesController.js";
 
 const router = express.Router();
 
-// Search for places
-router.get("/search", searchPlaces);
+// /api/places/search?query=manali
+router.get("/search", searchPlacesController);
 
-// Get detailed info for a place
+// /api/places/details/PLACE_ID
 router.get("/details/:placeId", getPlaceDetailsController);
 
-// Get specific photo by media ID
-router.get("/photo/:photoId", getPlacePhotoController);
+// /api/places/photo/:placeId/:photoName
+router.get("/photo/:placeId/:photoName", getPlacePhotoController);
 
 export default router;

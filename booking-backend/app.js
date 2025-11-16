@@ -70,6 +70,7 @@ app.use("/api/redirect", redirectRoutes);
 app.use("/api/aggregate", aggregationRoutes);
 app.use("/api/invoice", invoiceRoutes);
 app.use("/api/analytics",analyticsRoutes);
+app.use("/api/places", googlePlacesRoutes);
 
 // Health Check
 app.get("/", (req, res) => {
