@@ -1,121 +1,133 @@
+import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import crypto from "crypto";
-import dotenv from "dotenv";
-import { sendEmail } from "../services/emailServices.js";
-import { PrismaClient } from "@prisma/client";
-dotenv.config();
+import { OAuth2Client } from "google-auth-library";
 
 const prisma = new PrismaClient();
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-// Utility: generate JWT
-const generateToken = (id, role) => {
-  return jwt.sign({ id, role }, process.env.JWT_SECRET, {
-    expiresIn: "7d",
-  });
-};
+// ---------------- REGISTER USER ----------------
 
-// Register new user or owner
 export const registerUser = async (req, res) => {
   try {
-    // Debug incoming request for troubleshooting
-    console.log("[registerUser] incoming", {
-      method: req.method,
-      contentType: req.headers["content-type"],
-      body: req.body,
-      query: req.query,
+    const { name, email, phone, password } = req.body;
+
+    // 1) Validate input
+    if (!name || !email || !phone || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // 2) Check email exist
+    const existEmail = await prisma.user.findUnique({
+      where: { email },
     });
-
-    // Accept JSON or form-encoded bodies. If empty, allow quick testing via query params (temporary fallback).
-    const source = req.body && Object.keys(req.body).length ? req.body : req.query;
-    let { name, email, password, role } = source || {};
-
-    // Normalize role to uppercase enum values (USER/OWNER)
-    if (role && typeof role === "string") role = role.toUpperCase();
-
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: "All fields required" });
+    if (existEmail) {
+      return res.status(400).json({ message: "Email already registered" });
     }
 
-    const existing = await prisma.user.findUnique({ where: { email } });
-    if (existing) {
-      return res.status(400).json({ message: "User already exists" });
+    // 3) Check phone exist
+    const existPhone = await prisma.user.findUnique({
+      where: { phone },
+    });
+    if (existPhone) {
+      return res.status(400).json({ message: "Phone number already registered" });
     }
 
+    // 4) Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const verificationToken = crypto.randomBytes(32).toString("hex");
-
+    // 5) Create user
     const user = await prisma.user.create({
-      data: {
-        name,
-        email,
-        password: hashedPassword,
-        role: role || "USER",
-        verificationToken,
-      },
-      select: { id: true, name: true, email: true, role: true },
+      data: { name, email, phone, password: hashedPassword },
     });
 
-    // send verification email
-    const verifyLink = `${process.env.CLIENT_URL}/verify-email?token=${verificationToken}`;
-    await sendEmail(
-      email,
-      "Verify your Easy-Stay account",
-      `<h3>Welcome to Easy-Stay, ${name}!</h3>
-       <p>Please verify your email by clicking below:</p>
-       <a href="${verifyLink}">Verify Email</a>`
+    // 6) Generate JWT
+    const token = jwt.sign(
+      { id: user.id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
     );
 
-    const token = generateToken(user.id, user.role);
-
-    res.status(201).json({ ...user, token });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error during registration" });
-  }
-};
-
-// Login user
-export const loginUser = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
-
-    const token = generateToken(user.id, user.role);
-
-    res.status(200).json({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
+    return res.status(201).json({
+      message: "User registered successfully",
+      user: { id: user.id, name: user.name, email: user.email, phone: user.phone },
       token,
     });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Login failed" });
+
+  } catch (err) {
+    console.error("Register Error:", err);
+    return res.status(500).json({ message: "Server error" });
   }
 };
 
-//  Get logged in user details
-export const getMe = async (req, res) => {
+
+// ---------------- GOOGLE AUTH ----------------
+
+export const googleAuth = async (req, res) => {
   try {
-    const user = await prisma.user.findUnique({
-      where: { id: req.user.id },
-      select: { id: true, name: true, email: true, role: true, profileImage: true },
+    const { token } = req.body;
+
+    if (!token) {
+      return res.status(400).json({ message: "Google token required" });
+    }
+
+    // 1) Verify Google ID token
+    const ticket = await googleClient.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
     });
 
-    res.json(user);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching profile" });
+    const payload = ticket.getPayload();
+    const googleId = payload.sub;
+    const email = payload.email;
+    const name = payload.name || email.split("@")[0];
+
+    if (!email) {
+      return res.status(400).json({ message: "Google email not found" });
+    }
+
+    // 2) Check user exists in DB
+    let user = await prisma.user.findUnique({ where: { email } });
+
+    // 3) If not exists → create
+    if (!user) {
+      user = await prisma.user.create({
+        data: {
+          name,
+          email,
+          phone: "",
+          password: "",
+          googleId,
+        },
+      });
+    } 
+    // 4) If exists → update googleId if missing
+    else if (!user.googleId) {
+      user = await prisma.user.update({
+        where: { id: user.id },
+        data: { googleId },
+      });
+    }
+
+    // 5) Generate JWT
+    const appToken = jwt.sign(
+      { id: user.id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    return res.json({
+      message: "Logged in with Google",
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email
+      },
+      token: appToken,
+    });
+
+  } catch (err) {
+    console.error("Google Auth Error:", err);
+    return res.status(500).json({ message: "Google auth failed" });
   }
 };
