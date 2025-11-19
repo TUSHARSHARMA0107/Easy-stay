@@ -8,178 +8,63 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
+
+
 model User {
-  id           String     @id @default(cuid())
-  name         String
-  email        String     @unique
-  phone        String    @unique
-  password     String?
-  googleId     String?    @unique
-  authProvider String     @default("local")
-  profileImage String? // DP from Google or custom upload
-  role         Role       @default(USER)
-  bookings     Booking[]
-  reviews      Review[]
-  businesses   Business[]
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  Favorites    Favorite[]
-}
-
-model Favorite {
-  id        String   @id @default(cuid())
-  userId    String
-  placeId   String
+  id        String    @id @default(cuid())
   name      String
-  address   String?
-  image     String?
-  type      String?
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id])
-}
+  email     String    @unique
+  phone     String?
+  password  String?
+  googleId  String?
+  role      String    @default("user")
+  avatar    String?
 
-model Review {
-  id         String   @id @default(cuid())
-  userId     String
-  placeId    String
-  businessId String
-  business   Business @relation(fields: [businessId], references: [id])
-  rating     Float
-  comment    String?
-  photos     String[] @default([])
-  createdAt  DateTime @default(now())
-  user       User     @relation(fields: [userId], references: [id])
-}
-
-model ReviewReport {
-  id        String   @id @default(cuid())
-  reviewId  String
-  reason    String?
-  createdAt DateTime @default(now())
-}
-
-model RedirectLog {
-  id        String   @id @default(cuid())
-  platform  String
-  url       String
-  itemId    String?
-  userId    String?
-  clickedAt DateTime @default(now())
+  business  Business?
+  bookings  Booking[]
 }
 
 model Business {
-  id           String    @id @default(cuid())
-  ownerId      String
-  owner        User      @relation(fields: [ownerId], references: [id])
-  name         String
-  description  String?
-  category     String // hotel, restaurant, resort, etc.
-  location     String
-  latitude     Float?
-  longitude    Float?
-  rating       Float?    @default(0)
-  images       String[] // Array of image URLs
-  contactEmail String?
-  contactPhone String?
-  units        Unit[]
-  reviews      Review[]
-  bookings     Booking[]
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-}
-
-model Unit {
-  id            String    @id @default(cuid())
-  businessId    String
-  business      Business  @relation(fields: [businessId], references: [id])
-  type          String // single, double, suite, etc.
-  pricePerNight Float
-  available     Boolean   @default(true)
-  maxGuests     Int       @default(2)
-  amenities     String[] // wifi, breakfast, pool etc.
-  bookings      Booking[]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-}
-
-model Booking {
-  id               String        @id @default(cuid())
-  userId           String
-  businessId       String
-  unitId           String?
-  user             User          @relation(fields: [userId], references: [id])
-  business         Business      @relation(fields: [businessId], references: [id])
-  unit             Unit?         @relation(fields: [unitId], references: [id])
-  startDate        DateTime
-  endDate          DateTime
-  totalAmount      Float
-  paymentStatus    PaymentStatus @default(PENDING)
-  bookingStatus    BookingStatus @default(CONFIRMED)
-  confirmationCode String? // for user + owner confirmation
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
-}
-
-model Cache {
-  id        String   @id @default(cuid())
-  key       String   @unique
-  value     Json
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-}
-
-model GoogleCache {
-  id        String   @id @default(cuid())
-  query     String
-  placeId   String?
-  results   Json
-  createdAt DateTime @default(now())
-  ttl       Int      @default(86400)
-}
-
-model ExternalPrice {
   id          String   @id @default(cuid())
-  listingHash String
-  source      String
-  price       Float
-  currency    String   @default("INR")
-  url         String?
-  fetchedAt   DateTime @default(now())
-}
-
-model ExternalBusiness {
-  id          String   @id @default(cuid())
-  googleId    String?  @unique
+  ownerId     String   @unique
   name        String
+  description String?
   address     String?
-  location    String?
-  rating      Float?
-  images      String[] @default([])
-  type        String?
-  lastFetched DateTime @default(now())
+  images      String[]
+
+  owner       User     @relation(fields: [ownerId], references: [id])
+  rooms       Room[]
+  bookings    Booking[]
 }
 
 model Room {
-  id        String   @id @default(cuid())
-  name      String?
-  capacity  Int?
-  createdAt DateTime @default(now())
+  id          String   @id @default(cuid())
+  businessId  String
+  title       String
+  price       Float
+  maxGuests   Int
+  beds        Int
+  description String?
+  images      String[]
+  available   Boolean  @default(true)
+
+  business    Business @relation(fields: [businessId], references: [id])
+  bookings    Booking[]
 }
 
-enum Role {
-  USER
-  OWNER
-  ADMIN
-}
+model Booking {
+  id         String   @id @default(cuid())
+  userId     String
+  roomId     String
+  businessId String
+  checkIn    DateTime
+  checkOut   DateTime
+  guests     Int
+  totalPrice Float
+  status     String   @default("confirmed")
 
-enum PaymentStatus {
-  PENDING
-  COMPLETED
-  FAILED
-}
-
-enum BookingStatus {
-  CONFIRMED
-  CANCELLED
-  COMPLETED
+  user       User     @relation(fields: [userId], references: [id])
+  room       Room     @relation(fields: [roomId], references: [id])
+  business   Business @relation(fields: [businessId], references: [id])
 }

@@ -1,15 +1,20 @@
-import express, { Router } from "express";
-import { registerUser } from "../controllers/authController.js";
+import express from "express";
+import { registerUser, loginUser, googleAuth } from "../controllers/authController.js";
+import { authMiddleware } from "../middleware/authMiddleware.js";
 
-const router = express.Router();
+const authRoutes = express.Router();
 
-router.post("/register", registerUser);
-  router.post("/google",googleAuth);
+// Public routes
+authRoutes.post("/register", registerUser);
+authRoutes.post("/login", loginUser);
+authRoutes.post("/google", googleAuth);
 
-export default router;
+// Example private route
+authRoutes.get("/profile", authMiddleware, (req, res) => {
+  res.json({ message: "Profile accessed", user: req.user });
+});
 
-
-
+export default authRoutes;
 
 
 

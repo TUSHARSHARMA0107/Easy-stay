@@ -6,8 +6,14 @@ import passport from "passport";
 import "./config/passport.js";
 import bodyParser from "body-parser";
 
-// Import all routes
 
+
+// Import all routes
+import authRoutes from "./routes/authRoutes.js";
+import profileRoutes from "./routes/profileRoutes.js";
+import bookingRoutes from "./routes/bookingRoutes.js";
+import session from "express-session";
+import paymentRoutes from "./routes/paymentRoutesjs";
 
 dotenv.config();
 
@@ -28,6 +34,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Routes
+app.use("/api/auth",authRoutes);
+app.use("/api/profile",profileRoutes);
+app.use("/api/bookings",bookingRoutes);
+app.use("/api/payment", paymentRoutes);
 
 
 // Health Check
