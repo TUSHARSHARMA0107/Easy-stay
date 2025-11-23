@@ -3,8 +3,23 @@ A modern hotel booking platform built with React + Node.js + Prisma + PostgreSQL
 🌐 Live Links
 Service
 URL
+
+
+
+
+
+
+
+
+
 Frontend (Vercel)
 https://easy-stay-frontend.vercel.app
+
+
+
+
+
+
 Backend (Render)
 https://easy-stay-xgxq.onrender.com
 🚀 Tech Stack
