@@ -59,9 +59,11 @@ export default function Navbar() {
           onClick={() => navigate("/home")}
         >
           <img src="/assets/app logo.png" className="w-10 h-10 rounded-xl" />
-          <span className="font-extrabold text-[22px] text-green-500 drop-shadow">
-            EasyStay
-          </span>
+         <h1 class="text-4xl font-extrabold bg-gradient-to-r 
+    from-blue-500 via-green-400 to-blue-500 
+    bg-clip-text text-transparent animate-gradient-x">
+  EasyStay
+</h1>
         </div>
 
         {/* CENTER MENU + SEARCH (Desktop Only) */}
