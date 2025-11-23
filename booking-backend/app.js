@@ -1,43 +1,64 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import cookieSession from "cookie-session";
-import passport from "passport";
-import "./config/passport.js";
 import bodyParser from "body-parser";
+dotenv.config();
 
 
-
-// Import all routes
 import authRoutes from "./routes/authRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
+import businessRoutes from "./routes/businessRoutes.js";
 import bookingRoutes from "./routes/bookingRoutes.js";
-import session from "express-session";
-import paymentRoutes from "./routes/paymentRoutesjs";
+import paymentRoutes from "./routes/paymentRoutes.js";
 
-dotenv.config();
+import homeRoutes from "./routes/homeRoute.js";
+import exploreRoutes from "./routes/exploreRoute.js";
+import searchRoutes from "./routes/searchRoute.js";
+import hotelsRoutes from "./routes/hotelRoutes.js";
+
+
+import bookingApiRoutes from "./routes/bookingApiRoutes.js";
+
+
+
+
+
+
 
 const app = express();
 
-// Middleware
-app.use(cors({ origin: "https://localhost:5173" || "*", credentials: true }));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// CORS
+app.use(cors({
+  origin: "http://localhost:5173",
+  methods: "GET,POST,PUT,DELETE",
+  credentials: true
+}));
+
+// 🟢 BODY PARSER FIRST
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Session for Google OAuth
 
 
-// Passport initialization
-app.use(passport.initialize());
-app.use(passport.session());
 
-// Routes
-app.use("/api/auth",authRoutes);
-app.use("/api/profile",profileRoutes);
-app.use("/api/bookings",bookingRoutes);
+// ROUTES AFTER body-parser
+
+app.use("/api/auth", authRoutes);
+app.use("/api/profile", profileRoutes);
+app.use("/api/business", businessRoutes);
+app.use("/api/booking", bookingRoutes);
 app.use("/api/payment", paymentRoutes);
+
+
+app.use("/api/explore", exploreRoutes); 
+
+app.use("/api/home", homeRoutes);
+app.use("/api/explore", exploreRoutes);
+app.use("/api/search", searchRoutes);
+app.use("/api/hotels",hotelsRoutes);
+
+///rapidapi booking API routes
+app.use("/api/booking", bookingApiRoutes);
 
 
 // Health Check

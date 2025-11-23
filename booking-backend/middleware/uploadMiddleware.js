@@ -3,7 +3,7 @@ import { CloudinaryStorage } from "multer-storage-cloudinary";
 import { v2 as cloudinary } from "cloudinary";
 
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_NAME,
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
@@ -11,11 +11,8 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: "easystay_avatars",
-    allowed_formats: ["jpg", "jpeg", "png", "webp"],
+    folder: "user_avatars",
   },
 });
 
-const upload = multer({ storage });
-
-export default upload;
+export default multer({ storage });

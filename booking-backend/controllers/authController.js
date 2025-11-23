@@ -6,13 +6,14 @@ import { OAuth2Client } from "google-auth-library";
 const prisma = new PrismaClient();
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-// --------------------------------------------
+// -------------------------------------------------------
 // REGISTER USER
-// --------------------------------------------
-
+// -------------------------------------------------------
 export const registerUser = async (req, res) => {
   try {
     const { name, email, phone, password } = req.body;
+
+    console.log("Incoming Register Body:", req.body); // DEBUG
 
     if (!name || !email || !password) {
       return res.status(400).json({ message: "Name, Email & Password required" });
@@ -24,15 +25,14 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ message: "Email already registered" });
     }
 
-    // Check existing phone
+    // Check phone with findFirst() (NOT findUnique)
     if (phone) {
-      const existPhone = await prisma.user.findUnique({ where: { phone } });
+      const existPhone = await prisma.user.findFirst({ where: { phone } });
       if (existPhone) {
         return res.status(400).json({ message: "Phone already registered" });
       }
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create user
@@ -45,23 +45,16 @@ export const registerUser = async (req, res) => {
       },
     });
 
-    // Generate token
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
 
     return res.status(201).json({
       message: "User registered successfully",
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        avatar: user.avatar,
-        role: user.role,
-      },
+      user,
       token,
     });
+
   } catch (err) {
     console.error("Register error:", err);
     return res.status(500).json({ message: "Server error" });
@@ -69,10 +62,9 @@ export const registerUser = async (req, res) => {
 };
 
 
-// --------------------------------------------
-// GOOGLE LOGIN / REGISTER
-// --------------------------------------------
-
+// -------------------------------------------------------
+// GOOGLE LOGIN
+// -------------------------------------------------------
 export const googleAuth = async (req, res) => {
   try {
     const { token } = req.body;
@@ -87,56 +79,55 @@ export const googleAuth = async (req, res) => {
 
     const payload = ticket.getPayload();
     const googleId = payload.sub;
+    const name = payload.name;
     const email = payload.email;
-    const name = payload.name || email.split("@")[0];
     const avatar = payload.picture;
 
     let user = await prisma.user.findUnique({ where: { email } });
 
     if (!user) {
-      // Create google user
       user = await prisma.user.create({
         data: {
           name,
           email,
           googleId,
-          phone: "",
-          password: "",
           avatar,
+          password: "",
+          phone: "",
         },
       });
     } else if (!user.googleId) {
-      // Update if google login added later
       user = await prisma.user.update({
         where: { id: user.id },
         data: { googleId, avatar },
       });
     }
 
-    const jwtToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+    const appToken = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
 
     return res.json({
       message: "Google Login Successful",
       user,
-      token: jwtToken,
+      token: appToken,
     });
 
   } catch (err) {
-    console.error("Google auth error:", err);
-    return res.status(500).json({ message: "Google auth failed" });
+    console.error("GOOGLE ERROR:", err);
+    return res.status(500).json({ message: "Google Auth Failed" });
   }
 };
 
 
-// --------------------------------------------
+// -------------------------------------------------------
 // LOGIN USER
-// --------------------------------------------
-
+// -------------------------------------------------------
 export const loginUser = async (req, res) => {
   try {
     const { email, phone, password } = req.body;
+
+    console.log("Incoming Login Body:", req.body); // DEBUG
 
     if ((!email && !phone) || !password) {
       return res.status(400).json({ message: "Email/Phone & Password required" });
@@ -147,14 +138,13 @@ export const loginUser = async (req, res) => {
     if (email) {
       user = await prisma.user.findUnique({ where: { email } });
     } else {
-      user = await prisma.user.findUnique({ where: { phone } });
+      user = await prisma.user.findFirst({ where: { phone } });
     }
 
-    if (!user) {
+    if (!user)
       return res.status(404).json({ message: "User not found" });
-    }
 
-    // Google-only accounts don't have passwords
+    // If Google-only account
     if (!user.password) {
       return res.status(400).json({
         message: "This account uses Google Login only",
@@ -162,9 +152,8 @@ export const loginUser = async (req, res) => {
     }
 
     const match = await bcrypt.compare(password, user.password);
-    if (!match) {
+    if (!match)
       return res.status(400).json({ message: "Incorrect password" });
-    }
 
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
@@ -181,4 +170,3 @@ export const loginUser = async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
-

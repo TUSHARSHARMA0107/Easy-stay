@@ -12,34 +12,37 @@ datasource db {
 
 
 model User {
-  id        String    @id @default(cuid())
+  id        String     @id @default(cuid())
   name      String
-  email     String    @unique
-  phone     String?
+  email     String     @unique
+  phone     String?    @unique
   password  String?
   googleId  String?
-  role      String    @default("user")
+  role      String      @default("user")
   avatar    String?
 
-  business  Business?
-  bookings  Booking[]
+  business   Business[]   // owner can have multiple businesses
+  bookings   Booking[]    // user bookings
 }
 
 model Business {
-  id          String   @id @default(cuid())
-  ownerId     String   @unique
+  id          String      @id @default(cuid())
+  ownerId     String
   name        String
   description String?
   address     String?
   images      String[]
 
-  owner       User     @relation(fields: [ownerId], references: [id])
+  owner       User        @relation(fields: [ownerId], references: [id])
   rooms       Room[]
   bookings    Booking[]
+ amenities  String[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }
 
 model Room {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   businessId  String
   title       String
   price       Float
@@ -47,24 +50,22 @@ model Room {
   beds        Int
   description String?
   images      String[]
-  available   Boolean  @default(true)
-
-  business    Business @relation(fields: [businessId], references: [id])
+    amenities  String[]
+  business    Business   @relation(fields: [businessId], references: [id])
   bookings    Booking[]
 }
 
 model Booking {
-  id         String   @id @default(cuid())
-  userId     String
-  roomId     String
-  businessId String
-  checkIn    DateTime
-  checkOut   DateTime
-  guests     Int
-  totalPrice Float
-  status     String   @default("confirmed")
+  id          String      @id @default(cuid())
+  userId      String
+  businessId  String
+  roomId      String
+  checkIn     DateTime
+  checkOut    DateTime
+  totalPrice  Float
+  status      String      @default("pending") // pending | confirmed | cancelled
 
-  user       User     @relation(fields: [userId], references: [id])
-  room       Room     @relation(fields: [roomId], references: [id])
-  business   Business @relation(fields: [businessId], references: [id])
+  user        User        @relation(fields: [userId], references: [id])
+  business    Business    @relation(fields: [businessId], references: [id])
+  room        Room        @relation(fields: [roomId], references: [id])
 }

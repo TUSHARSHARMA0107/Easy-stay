@@ -2,22 +2,62 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Animations */
+@keyframes popIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.animate-popIn { animation: popIn 0.4s ease-out; }
+
+@keyframes slowFade {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+.animate-slowFade { animation: slowFade 1.5s ease-in; }
+
+@keyframes slideDown {
+  0% { transform: translateY(-20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+.animate-slideDown { animation: slideDown 0.8s ease-out; }
+
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+.animate-fadeIn { animation: fadeIn 1s ease-in; }
+
+* {
+  box-sizing: border-box;
 }
 
-@keyframes slideInLeft {
-  from { transform: translateX(-40px); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  background: #f9fafb;
 }
 
-@keyframes slideInUp {
-  from { transform: translateY(40px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+img {
+  max-width: 100%;
+  display: block;
 }
 
-.animate-fadeIn { animation: fadeIn 0.8s ease; }
-.animate-slideInLeft { animation: slideInLeft 0.8s ease; }
-.animate-slideInUp { animation: slideInUp 0.8s ease; }
+/* DARK/LIGHT GLOBAL TRANSITION */
+:root, .dark {
+  transition: all 0.35s ease-in-out;
+}
+
+body {
+  transition: background-color 0.35s ease, color 0.35s ease;
+}
+
+/* Floating Navbar Animation */
+.floating-nav {
+  animation: floatNav 1.8s ease-in-out infinite;
+}
+
+@keyframes floatNav {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+  100% { transform: translateY(0px); }
+}

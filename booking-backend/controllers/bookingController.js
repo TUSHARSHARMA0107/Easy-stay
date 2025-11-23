@@ -1,20 +1,25 @@
-import prisma from "../config/prisma.js";
+import { PrismaClient } from "@prisma/client";
 
-// CREATE BOOKING
+const prisma = new PrismaClient();
+
+/**
+ * USER MAKES A BOOKING
+ */
 export const createBooking = async (req, res) => {
   try {
-    const { roomId, checkIn, checkOut, guests } = req.body;
+    const { roomId, checkIn, checkOut } = req.body;
+
+    if (!roomId || !checkIn || !checkOut)
+      return res.status(400).json({ message: "Missing required fields" });
 
     const room = await prisma.room.findUnique({ where: { id: roomId } });
     if (!room) return res.status(404).json({ message: "Room not found" });
 
-    const nights =
-      (new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24);
+    const days =
+      (new Date(checkOut).getTime() - new Date(checkIn).getTime()) /
+      (1000 * 60 * 60 * 24);
 
-    if (nights <= 0)
-      return res.status(400).json({ message: "Invalid date selection" });
-
-    const totalPrice = nights * room.price;
+    const totalPrice = days * room.price;
 
     const booking = await prisma.booking.create({
       data: {
@@ -23,33 +28,37 @@ export const createBooking = async (req, res) => {
         businessId: room.businessId,
         checkIn: new Date(checkIn),
         checkOut: new Date(checkOut),
-        guests: parseInt(guests),
         totalPrice,
       },
     });
 
-    return res.json({ message: "Booking confirmed", booking });
+    return res.json({
+      message: "Booking created successfully",
+      booking,
+    });
   } catch (err) {
-    return res.status(500).json({ message: "Booking failed" });
+    console.log("Create booking error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
-// GET USER BOOKINGS
+/**
+ * USER VIEW HIS BOOKINGS
+ */
 export const getMyBookings = async (req, res) => {
-  const bookings = await prisma.booking.findMany({
-    where: { userId: req.user.id },
-    include: { room: true },
-  });
+  try {
+    const bookings = await prisma.booking.findMany({
+      where: { userId: req.user.id },
+      include: {
+        room: true,
+        business: true,
+      },
+      orderBy: { checkIn: "desc" },
+    });
 
-  return res.json(bookings);
-};
-
-// GET OWNER BOOKINGS
-export const getOwnerBookings = async (req, res) => {
-  const bookings = await prisma.booking.findMany({
-    where: { businessId: req.params.businessId },
-    include: { user: true, room: true },
-  });
-
-  return res.json(bookings);
+    return res.json({ bookings });
+  } catch (err) {
+    console.log("GetMyBookings error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
 };

@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "nodemon server.js",
     "postinstall": "prisma generate",
-    "start": "node server.js"
+    "start": "node server.js",
+      "check:users": "node scripts/checkUsers.js"
+    
   },
   "keywords": [],
   "author": "",
@@ -47,3 +49,6 @@
     "stripe": "^19.2.0"
   }
 }
+
+
+
