@@ -29,76 +29,18 @@ Booking Management
 RapidAPI – Booking.com Hotels API
 RapidAPI – Google Image Search
 Cloudinary Image Hosting (optional)
-📁 Project Structure
+
+
 Backend
-Copy code
 
-booking-backend/
-│── prisma/
-│   └── schema.prisma
-│── src/
-│   ├── controllers/
-│   ├── routes/
-│   ├── middleware/
-│   ├── utils/
-│   ├── app.js
-│   └── server.js
-│── .env
-│── package.json
-Frontend
-Copy code
-
-booking-frontend/
-│── src/
-│   ├── pages/
-│   │   ├── user/
-│   │   ├── owner/
-│   │   └── auth/
-│   ├── components/
-│   ├── config/api.js
-│   ├── App.jsx
-│   └── main.jsx
-│── .env
-│── vite.config.js
-│── package.json
-🔑 Environment Variables
-🟦 Backend (.env on Render)
-Copy code
-
-DATABASE_URL=postgresql://...
-JWT_SECRET=your_jwt_secret
-
-# Google Login (Optional)
-GOOGLE_CLIENT_ID=your_google_client_id
-
-# RapidAPI Keys
-RAPIDAPI_KEY=5c91197fbamshb79bee8efc250dap14482bjsnb363a3156e7d
-GOOGLE_IMAGE_API_KEY=5c91197fbamshb79bee8efc250dap14482bjsnb363a3156e7d
-
-# Allowed Frontend URL
-FRONTEND_URL=https://easy-stay-frontend.vercel.app
-🟩 Frontend (.env on Vercel)
-Copy code
-
-VITE_BACKEND=https://easy-stay-xgxq.onrender.com
-VITE_GOOGLE_CLIENT_ID=your_google_client_id  # OPTIONAL
-🔥 Important: Vite Config
-vite.config.js
-Copy code
-Js
-export default defineConfig({
-  plugins: [react()],
-});
-NO proxy in production
-NO process.env override
-🧪 Local Development
-Backend
 Copy code
 
 cd booking-backend
 npm install
 npx prisma generate
 npm run dev
+
+
 Frontend
 Copy code
 
