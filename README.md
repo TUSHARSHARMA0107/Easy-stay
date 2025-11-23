@@ -22,8 +22,30 @@ https://easy-stay-frontend.vercel.app
 
 Backend (Render)
 https://easy-stay-xgxq.onrender.com
+
+
+
+
+
+
+
+
+
+
+
+
+
 🚀 Tech Stack
-Frontend
+
+
+
+
+
+
+
+
+
+Frontend:
 React + Vite
 Tailwind CSS
 Axios
