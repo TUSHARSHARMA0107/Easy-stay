@@ -34,6 +34,7 @@ app.use(cors({
           "https://easy-stay-frontend.vercel.app/"],
   
   methods:[ "GET,POST,PUT,DELETE"],
+  allowedHeaders:["Content-Type","Authorization"],
   credentials: true
 }));
 
