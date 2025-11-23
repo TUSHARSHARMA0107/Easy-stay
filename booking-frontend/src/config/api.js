@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://easy-stay-xgxq.onrender.com/api",
+  baseURL:  import.meta.env.VITE_BACKEND_URL,
+  withCredentials:false,
 });
 
 // Add token automatically

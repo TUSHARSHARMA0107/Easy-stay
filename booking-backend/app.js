@@ -30,8 +30,10 @@ const app = express();
 
 // CORS
 app.use(cors({
-  origin: "http://localhost:5173",
-  methods: "GET,POST,PUT,DELETE",
+  origin: ["http://localhost:5173",
+          "https://easy-stay-frontend.vercel.app/"],
+  
+  methods:[ "GET,POST,PUT,DELETE"],
   credentials: true
 }));
 
