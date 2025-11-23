@@ -54,7 +54,17 @@ React Router
 Reusable UI Components
 Fully Responsive UI
 Dark/Light Mode Support
-Backend
+
+
+
+
+
+
+
+
+
+
+Backend:
 Node.js + Express
 Prisma ORM (Neon/PostgreSQL)
 JWT Authentication
@@ -73,17 +83,51 @@ Backend
 Copy code
 
 cd booking-backend
+
+
+
+
 npm install
+
+
+
 npx prisma generate
+
+
+
+
 npm run dev
 
 
 Frontend
+
+
+
+
+
 Copy code
 
 cd booking-frontend
+
+
+
+
+
 npm install
+
+
+
+
+
+
 npm run dev
+
+
+
+
+
+
+
 ⚙ Deploy Instructions
 🟦 Backend on Render
 New → Web Service
